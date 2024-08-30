@@ -8,11 +8,34 @@ import { useDropzone } from 'react-dropzone';
 import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({
-    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
-    dangerouslyAllowBrowser: true
-});
+// Mock OpenAI Client
+//Comment out or remove mock code once API_Key is available
+class MockOpenAI {
+    async chat() {
+        return {
+            completions: {
+                create: async ({ model, messages }) => {
+                    // Mock response logic
+                    const lastUserMessage = messages[messages.length - 1].content;
+                    return {
+                        choices: [
+                            { message: { content: `Mock response to: ${lastUserMessage}` } }
+                        ]
+                    };
+                }
+            }
+        };
+    }
+}
+
+
+// Initialize the OpenAI client (mock or real)
+const openai = process.env.REACT_APP_OPENAI_API_KEY
+    ? new OpenAI({
+        apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true
+    })
+    : new MockOpenAI();
 
 // Add this console log to check if the API key is being read correctly
 console.log("API Key:", process.env.REACT_APP_OPENAI_API_KEY ? "API key is set" : "API key is not set");
